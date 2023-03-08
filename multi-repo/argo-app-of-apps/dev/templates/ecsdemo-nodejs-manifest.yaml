@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: ecsdemo-nodejs
+  namespace: apps
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destinations:
+  - namespace: apps
+    server: https://kubernetes.default.svc
+  sourceRepos:
+  - '{{ .Values.spec.apps.ecsdemoNodejs.repoURL }}'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ecsdemo-nodejs
+  namespace: apps
+  labels: |
+    {{- toYaml .Values.labels | nindent 4 }}
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  project: ecsdemo-nodejs
+  destination:
+    namespace: apps
+    server: '{{ .Values.spec.destination.server }}'
+  source:
+    repoURL: '{{ .Values.spec.apps.ecsdemoNodejs.repoURL }}'
+    targetRevision: '{{ .Values.spec.apps.ecsdemoNodejs.targetRevision }}'
+    path: '{{ .Values.spec.apps.ecsdemoNodejs.path }}'
+    helm:
+      values: |
+        {{ toYaml .Values.spec.apps.ecsdemoNodejs | nindent 8 }}
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+    - CreateNamespace=false
+
