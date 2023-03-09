@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   name: ecsdemo-nodejs
-  namespace: apps
+  namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
@@ -16,7 +16,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: ecsdemo-nodejs
-  namespace: apps
+  namespace: argocd
   labels: |
     {{- toYaml .Values.labels | nindent 4 }}
   finalizers:
